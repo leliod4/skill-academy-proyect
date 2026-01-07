@@ -1,0 +1,41 @@
+[project]
+name = "backend"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "blinker",
+    "click",
+    "Flask",
+    "Flask-Migrate",
+    "Flask-SQLAlchemy",
+    "greenlet",
+    "itsdangerous",
+    "Jinja2",
+    "MarkupSafe",
+    "marshmallow",
+    "marshmallow-sqlalchemy",
+    "PyMySQL",
+    "SQLAlchemy",
+    "typing_extensions",
+    "Werkzeug",
+    "bcrypt<4.0",
+    "Flask-JWT-Extended",
+    "passlib[bcrypt]==1.7.4",
+    "Flask-Cors"
+]
+Esta estructura que compartiste es excelente y sigue patrones de diseño muy limpios (como el uso de Repository y Services), lo cual es ideal para un perfil Semi-Senior. Al usar uv, ya tienes la base técnica más rápida y moderna disponible.
+
+Aquí te explico cómo encaja cada carpeta en tu objetivo de aprendizaje y cómo deberías organizar la lógica:
+
+1. Desglose de tu Arquitectura Profesional
+repository/: Aquí va el acceso a la base de datos (SQLAlchemy). No pongas lógica de negocio acá, solo consultas (ej. get_user_by_email). Esto hace que cambiar de base de datos sea sencillo.
+
+services/: Esta es la carpeta más importante para tu nivel. Aquí vive la lógica de negocio. Por ejemplo: el proceso de inscripción a un curso, validar si el alumno tiene saldo o si el instructor tiene permisos, ocurre aquí.
+
+views/: En Flask, aquí registrarás tus Blueprints y rutas. Su única función es recibir el JSON, llamar al Service correspondiente y devolver la respuesta.
+
+decorators/: Perfecto para lo que pedías. Aquí crearás el @admin_required o @instructor_required para manejar los rangos de usuario de forma limpia.
+
+schemas/: Aquí usarás Marshmallow o Pydantic para validar que el JSON que envía el frontend (React) tenga el formato correcto antes de procesarlo.
