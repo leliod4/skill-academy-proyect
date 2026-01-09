@@ -35,3 +35,13 @@ class UserRepository:
         db.session.delete(user)
         db.session.commit()
     
+    @staticmethod
+    def update():
+       #para poder actualizar role/password/name (se completa en service por buena practica)
+        db.session.commit()
+
+    @staticmethod
+    def soft_delete(user):
+        #borrado logico
+        user.is_active = False
+        db.session.commit()
