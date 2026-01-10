@@ -9,7 +9,6 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False, unique=True)
     email = db.Column(db.String(100), nullable=False, unique=True)
-    password = db.Column(db.String(512), nullable=False) #512 caracteres, 100 es poco para guardar contraseñas hash/encriptada
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc)) #con lambda se actualiza en cada cambio
     updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     is_active = db.Column(db.Boolean, default=True) 
@@ -87,6 +86,7 @@ class Lesson(db.Model):
      
     #no es necesario declarar la relacion de cursos con leccion 
     #porque ya esta creada en la tabla lecciones
+
     
 class Enrollment(db.Model): #inscripciones
     __tablename__ = 'enrollments'
@@ -115,6 +115,7 @@ class Enrollment(db.Model): #inscripciones
         "Course", 
         backref=db.backref("enrollments", lazy=True)
     )
+ 
     
 class Category(db.Model):
     __tablename__ = 'categories'
@@ -129,3 +130,33 @@ class Category(db.Model):
     )
     def __repr__(self):
         return f'<Category {self.name}>'
+    
+
+class Rating(db.Model):
+    __tablename__ = 'ratings'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    score = db.Column(db.Integer, nullable=False) #de 1 a 5 estrellas
+    comment = db.Column(db.Text, nullable=True)
+    user_id = db.Column(
+        db.Integer, 
+        db.ForeignKey('users.id'), 
+        nullable=False
+    )
+    course_id = db.Column(
+        db.Integer, 
+        db.ForeignKey('courses.id'), 
+        nullable=False
+    )
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    __table_args__ = (
+        db.UniqueConstraint('user_id', 'course_id', name='unique_user_rating_per_course'), 
+    ) #esto sirve como restriccion para que un usuario solo pueda calificar un curso una vez
+    user = db.relationship(
+        "User", 
+        backref=db.backref("ratings", lazy=True)
+    )
+    course = db.relationship(
+        "Course", 
+        backref=db.backref("ratings", lazy=True)
+    )
